@@ -141,16 +141,17 @@ fn main() {
     println!("");
 
     println!("pub struct Metrics {{");
-    println!("    pub ascent: u8, pub descent: i8, pub line_gap: u8, pub min_width: u8, pub max_width: u8 }}");
+    println!("    pub ascent: u8, pub descent: i8, pub line_gap: u8, pub min_width: u8, pub max_width: u8, pub rle_bytes: u16 }}");
     println!("");
     let line_metrics = font.horizontal_line_metrics(FONT_SIZE).unwrap();
     println!(
         "pub static METRICS: &'static Metrics = &Metrics {{ \
-        ascent: {}, descent: {}, line_gap: {}, min_width: {}, max_width: {} }};",
+        ascent: {}, descent: {}, line_gap: {}, min_width: {}, max_width: {}, rle_bytes:{} }};",
         line_metrics.ascent.ceil(),
         line_metrics.descent.floor(),
         line_metrics.line_gap.ceil(),
         min_width,
-        max_width
+        max_width,
+        rle_index*2
     );
 }
