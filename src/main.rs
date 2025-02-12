@@ -1,6 +1,6 @@
 use fontdue::Font;
 
-#[allow(dead_code)]
+#[derive(Copy, Clone)]
 struct Glyph {
     rle_start: u16,
     c: char,
@@ -47,6 +47,15 @@ fn main() {
     // Parse the font
     let font = Font::from_bytes(font_data, fontdue::FontSettings::default()).unwrap();
 
+    let mut glyphs: [Glyph; 128] = [Glyph {
+        rle_start: 0,
+        c: '\0',
+        xmin: 0,
+        ymin: 0,
+        width: 0,
+        height: 0,
+    }; 128];
+
     println!("static FONT_RLE_DATA: &'static [(i8, u8)] = &[(0, 0),");
     let mut rle_index = 1;
 
@@ -55,11 +64,32 @@ fn main() {
         if (*c > '~') || (*c < ' ') {
             continue;
         }
-        //println!("Glyph {:?}: {:?}", index, c);
+
+        // todo rmeove
+        if true {
+            if (*c > '2') || (*c < '1') {
+                continue;
+            }
+        }
+    //println!("Glyph {:?}: {:?}", index, c);
 
         // Use the font (e.g., to get the metrics of a character)
         let (metrics, bitmap) = font.rasterize(*c, 20.0);
         //println!("Character metrics: {:?}", metrics);
+
+        let glyph_index = *c as usize;
+        assert!(glyph_index < 128);
+
+        let g: Glyph = Glyph {
+            rle_start: rle_index,
+            c: *c,
+            xmin: metrics.xmin as i8,
+            ymin: metrics.ymin as i8,
+            width: metrics.width as u8,
+            height: metrics.height as u8,
+        };
+
+        glyphs[glyph_index] = g;
 
         println!("// Char {} at {}", *c, rle_index);
 
@@ -73,7 +103,7 @@ fn main() {
                 if val == prev_val {
                     count += 1;
                 } else {
-                    print!("({}, {}),", count, 255-prev_val);
+                    print!("({}, {}),", count, 255 - prev_val);
                     rle_index += 1;
 
                     prev_val = val;
@@ -87,6 +117,39 @@ fn main() {
         println!("(0, 0),");
         rle_index += 1;
     }
-
     println!("];"); // end of FONT_RLE_DATA
+    println!("");
+
+    let mut glyph_index: [u8; 128] = [0; 128];
+
+    println!("static FONT_METRICS: &'static [Glyph] = &[");
+    let mut index = 0;
+    for g in glyphs.iter() {
+        if g.rle_start != 0 {
+
+            let mut s = (g.c).to_string();
+            if s.as_str() == "\\" {
+                s = String::from( "\\\\" );
+            }
+            if s.as_str() ==  "'"{
+                s = String::from( "\\'" );
+            }
+
+            println!(
+                "Glyph {{ rle_start: {}, c: '{}', xmin: {}, ymin: {}, width: {}, height: {} }},",
+                g.rle_start, s , g.xmin, g.ymin, g.width, g.height
+            );
+            glyph_index[g.c as usize] = index as u8;
+            index += 1;
+        }
+    }
+    println!("];");
+    println!("");
+
+    println!("static FONT_GLYPH_INDEX: &'static [u8] = &[");
+
+    for i in 0..128 {
+     println!("{},", glyph_index[i]);
+    }
+    println!("];");
 }
