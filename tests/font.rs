@@ -214,10 +214,14 @@ pub struct Metrics {
     pub ascent: u8,
     pub descent: i8,
     pub line_gap: u8,
+    pub min_width: u8,
+    pub max_width: u8,
 }
 
 pub static METRICS: &'static Metrics = &Metrics {
     ascent: 22,
     descent: -6,
     line_gap: 0,
+    min_width: 7,
+    max_width: 11,
 };
