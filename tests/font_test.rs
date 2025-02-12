@@ -11,7 +11,7 @@ fn test_digit1() {
 
 #[test]
 fn test_rle() {
-    let index = font::GLYPH_INDEX['a' as usize] as usize;
+    let index = font::GLYPH_INDEX['Z' as usize] as usize;
     let glyph = &font::GLYPH_METRICS[index];
 
     let rle_start = glyph.rle_start as usize;
