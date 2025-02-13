@@ -13,7 +13,7 @@ struct Glyph {
 fn main() {
     // Load the font data from a file
     let font_data = include_bytes!("../fonts/NotoSans-Regular.ttf") as &[u8];
-    const FONT_SIZE: f32 = 11.0;
+    const FONT_SIZE: f32 = 10.0;
 
     println!("// Do not edit - generated with font2rusty");
     println!("// Font data for NotoSans-Regular.ttf at {}pt", FONT_SIZE);
@@ -89,6 +89,10 @@ fn main() {
                     prev_val = val;
                     count = 1;
                 }
+            }
+            if count > 0 { // todo - could skip if prev val is 0
+                print!("({}, {}),", count, 255 - prev_val); // todo - could combine with following -1
+                rle_index += 1;
             }
 
             println!("(-1, 255),");
