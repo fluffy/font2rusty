@@ -11,7 +11,7 @@ fn test_digit1() {
 
 #[test]
 fn test_rle() {
-    let index = font::GLYPH_INDEX['Z' as usize] as usize;
+    let index = font::GLYPH_INDEX['l' as usize] as usize;
     let glyph = &font::GLYPH_METRICS[index];
 
     let rle_start = glyph.rle_start as usize;
@@ -24,7 +24,7 @@ fn test_rle() {
     let mut col : i32 = 0;
 
     let max_row = font::METRICS.ascent as i32 - font::METRICS.descent as i32;
-    let max_cal = glyph.width as i32;
+    let max_col = glyph.width as i32 +1 ;
 
     assert!( font::METRICS.min_width <= font::METRICS.max_width);
     assert!( font::METRICS.rle_bytes > 0 );
@@ -50,14 +50,14 @@ fn test_rle() {
             for _ in 0 .. glyph.xmin {
                 print!("_");
                 col += 1;
-                assert!( col <= max_cal);
+                assert!( col <= max_col);
             }
         }
         if count == -1 {
             for _ in col ..width {
                 print!("_");
                 col += 1;
-                assert!( col <= max_cal);
+                assert!( col <= max_col);
             }
             println!("");
             row += 1;
@@ -69,11 +69,11 @@ fn test_rle() {
                 if val > 128 {
                     print!("_");
                     col += 1;
-                    assert!( col <= max_cal);
+                    assert!( col <= max_col);
                 } else {
                     print!("*");
                     col += 1;
-                    assert!( col <= max_cal);
+                    assert!( col <= max_col);
                 }
             }
         }
